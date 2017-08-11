@@ -45,9 +45,7 @@ Considerando o MSP430, no qual a memória é separada em bytes e guarda palavra 
 
 6. Sabendo que o processador do MSP430 tem registradores de 16 bits, como ele soma duas variáveis de 32 bits?
 
-A soma de duas variáveis de 32 bits teria de ser feita com o auxílio de registradores auxiliares.
-
-As variáveis de 32 bits ocupariam dois registradores de propósito geral, por exemplo, *R4* (LSB) e *R5* (MSB) para a primeira, e *R6* (LSB) e *R7* (MSB) para a segunda.
+A soma de duas variáveis de 32 bits teria de ser feita com o auxílio de registradores auxiliares. As variáveis de 32 bits ocupariam dois registradores de propósito geral, por exemplo, *R4* (LSB) e *R5* (MSB) para a primeira, e *R6* (LSB) e *R7* (MSB) para a segunda.
 
 A soma seria feita primeiramente somando-se os registradores reponsáveis pelos dígitos menos significativos das duas variáveis, no exemplo, *R4* e *R6*. Em seguida, seria analisada a flag responsável pelo carry da operação, a qual está localizada no registrador *R2*.
 
