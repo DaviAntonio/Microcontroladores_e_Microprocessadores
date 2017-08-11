@@ -1,9 +1,11 @@
-# Perguntas Aula 02
+# Respostas às Perguntas Aula 02
 ## Data: 11/08/2017
 1. Quais as diferenças entre os barramentos de dados e de endereços?
+
 O barramento de dados é o barramento pelo qual são transferidas as sequências de bits referentes aos dados lidos ou que serão gravados, enquanto pelo barramneto de endereços são transferidos os bits referidos ao endereço no qual serão lidos ou escritos tais dados.
 
 2. Quais são as diferenças entre as memórias RAM e ROM?
+
 A memória RAM possui volatilidade, os conteúdos armazenados são perdidos quando não há alimentação. Já a memória ROM armazena os dados de maneira não volátil, estes não são perdidos na falta de energia.
 
 3. Considere o código abaixo:
@@ -24,10 +26,13 @@ int main(void)
 ```
 
 Para este código, responda: (a) A variável `i` é armazenada na memória RAM ou ROM? Por quê? (b) O programa compilado a partir deste código é armazenado na memória RAM ou ROM? Por quê?
+
 (a) A variável i será armazenada na memória RAM, pois faz parte da execução do programa e terá seu valor alterado, não sendo necessário armazena-la após o término programa.
+
 (b) O programa compilado será armazenado na ROM, pois há a necessidade de mantê-lo após o desligameno do computador.
 
 4. Quais são as diferenças, vantagens e desvantagens das arquiteturas Harvard e Von Neumann?
+
 Na arquitetura de Harvard a memória de programa, ROM, é separada da memória de dados, RAM, sendo que as duas possuem barramentos diferentes para endereço e dados, sendo ambos conjuntos de barramentos otimizados separadamente. Já a arquitetura von Neumann possui a RAM e a ROM em um único espaço de memória acessado por um único conjunto de barramentos de dados e endereço.
 
 5. Considere a variável inteira `i`, armazenando o valor `0x8051ABCD`. Se `i` é armazenada na memória a partir do endereço `0x0200`, como ficam este byte e os seguintes, considerando que a memória é: (a) Little-endian; (b) Big-endian.
