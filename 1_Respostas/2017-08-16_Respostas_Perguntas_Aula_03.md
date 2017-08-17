@@ -36,7 +36,7 @@ int main(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;
 	P1DIR |= LEDS; // Definir LEDS como saída
-	P1OUT |= LEDS; // Ligar LEDS na saída
+	P1OUT = 0x00; // Inicia a saída em nível baixo
 	while(1)
 		P1OUT ^= LEDS; // Piscar os LEDS (toggle)
 	return 0;
@@ -51,13 +51,26 @@ int main(void)
 #define LEDS (LED1|LED2)
 #define BTN BIT3
 
+void pisca_leds (int nvezes)
+{
+	while(nvezes > 0){ // No de vezes que vai ligar e desligar LEDS (piscar)
+		P1OUT ^= LEDS;
+		P1OUT ^= LEDS;
+		nvezes--;
+	}
+}
+
 int main(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;
 	P1DIR |= LEDS; // Definir LEDS como saída
+	P1OUT = 0x00; // Inicia a saída em nível baixo
 	while(1) {
-		
-		P1OUT ^= LEDS; // Piscar os LEDS (toggle)
+		while(((P1IN&BTN) =! 0);
+		// Não fazer nada enquanto botão não é ativado
+		pisca_leds(2)// Quando apertar o botão (nível baixo), piscar
+		while(((P1IN&BTN) == 0);
+		// Não piscar mais de 2 vezes se segurar o botão
 	}
 	return 0;
 }
