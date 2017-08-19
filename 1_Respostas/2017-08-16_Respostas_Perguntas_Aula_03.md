@@ -72,14 +72,14 @@ int main(void)
 	P1DIR |= LEDS; // Definir LEDS como saída
 	P1OUT = 0x00; // Inicia a saída em nível baixo
 	while(1) {
-		while(((P1IN & BTN) =! 0);
+		while((P1IN & BTN) =! 0);
 		// Não fazer nada enquanto botão não é ativado
 		P1OUT ^= LEDS;
 		P1OUT ^= LEDS; // Pisca 1 vez
 		P1OUT ^= LEDS;
 		P1OUT ^= LEDS; // 2 vezes
 		// Quando apertar o botão (nível baixo), piscar
-		while(((P1IN & BTN) == 0);
+		while((P1IN & BTN) == 0);
 		// Não piscar mais de 2 vezes se segurar o botão
 	}
 	return 0;
@@ -151,12 +151,12 @@ int main(void)
 	P1DIR |= LEDS; // Definir LEDS como saída
 	P1OUT = 0x00; // Inicia a saída em nível baixo
 	while(1) {
-		while(((P1IN & BTN) =! 0);
+		while((P1IN & BTN) =! 0);
 		// Não fazer nada enquanto botão não é ativado
 		for(i = 0; i < 2; i++)
 			pisca_leds();
 			// Quando apertar o botão (nível baixo), piscar
-		while(((P1IN & BTN) == 0);
+		while((P1IN & BTN) == 0);
 		// Não piscar mais de 2 vezes se segurar o botão
 	}
 	return 0;
