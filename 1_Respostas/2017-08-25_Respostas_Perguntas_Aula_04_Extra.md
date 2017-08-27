@@ -67,4 +67,35 @@ mov.w R14, 4(R9)
 
 (e) `A[3] = 3*f - 5*h;`
 
+```
+; Multiplica 3*R4
+mov.w R4, R11
+add.w R4, R11	; R11 = 2*R4
+add.w R4, R11	; R11 = 2*R4 + R4 = 3*R4
+
+; Multiplica 5*R6
+mov.w R6, R12
+add.w R6, R12	; R12 = 2*R6
+add.w R6, R12	; R12 = 3*R6
+add.w R6, R12
+add.w R6, R12
+
+; Subtrai 3*R4 - 5*R6
+sub.w R4, R6	; R6 = R6 - R4
+
+; Guardar em 6 bytes a frente de endereço em R9
+mov.w R6, 6(R9)
+```
+
 (f) `A[5] = 6*(f - 2*h);`
+
+```
+; Multiplica 2*R6
+add.w R6, R6
+
+; Subtrai R4 - R6 = R4 - (2*R6)
+sub.w R6, R4
+
+; Colocar 10 bytes a frente do endereço em R9
+mov.w R4, 10(R9)
+```
