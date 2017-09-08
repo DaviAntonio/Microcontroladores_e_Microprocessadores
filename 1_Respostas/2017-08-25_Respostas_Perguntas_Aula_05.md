@@ -1,5 +1,5 @@
-#
-#
+# Respostas às Perguntas Aula 05
+## Data: 25/08/2017
 Para as questões 2 a 5, considere que as variáveis `f`, `g`, `h`, `i` e `j` são do tipo inteiro (16 bits na arquitetura do MSP430), e que o vetor `A[]` é do tipo inteiro. Estas variáveis estão armazenadas nos seguintes registradores:
 	f: R4
 	g: R5
