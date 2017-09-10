@@ -47,7 +47,6 @@ int Potencia(int x, int N)
 	int a = 1;
 	while(N > 0){
 		a *= x;
-		printf("N = %d, x = %d\n", N, a);
 		N--;
 	}
 	return a;
@@ -73,6 +72,29 @@ O protótipo da função é:
 
 ```C
 unsigned long long DuploFatorial(unsigned long long n);
+```
+
+```C
+unsigned long long DuploFatorial(unsigned long long n)
+{
+	int k;
+	unsigned long long int dfat = 1;
+	if((n == 0) || (n == 1))
+		return 1;
+
+        // testar o LSB
+	if((n & 0x0000000000000001) == 0){
+	// é par, n!! = 2*4*6*...*n
+		for(k = 1; k <= (n >> 1); k++)
+			dfat *= (2*k);
+		return dfat;
+	} else {
+	// é ímpar, n!! = 3*5*7*...*n
+		for(k = 1; k <= (n >> 1); k++)
+			dfat *= (2*k + 1);
+		return dfat;
+	}
+}
 ```
 
 7. (a) Escreva uma função em C que calcula a função exponencial utilizando a série de Taylor da mesma. Considere o cálculo até o termo n = 20. O protótipo da função é `double ExpTaylor(double x);`
