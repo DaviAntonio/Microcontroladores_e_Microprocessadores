@@ -56,6 +56,74 @@ int Potencia(int x, int N)
 (b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430. `x` e `n` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida no registrador R15.
 
 ```
+	; Calcular x^N
+	; Colocar valor x = R15 e N = R14
+	call #Potencia
+	
+	keep:
+	jmp keep
+
+	; R15 = x, R14 = N
+
+	Potencia:
+	; Colocar 1 em R13, a
+	mov.w #1, R13
+
+	Potencia_loop:
+	tst.w R14
+	jz Potencia_retorno
+
+	; Salvar valores de R15 e R14 da função de potência antes de chamar
+	; a função de multiplicação
+	push.w R15
+	push.w R14
+
+	;A função de potência salvaria o resultado no a = R13 para passar
+	;para o R15 no final
+	;A multiplicação a ser feita é a (R13) = a (R13) * x (R15)
+	;A função de multiplicação receberá x (R15) e a, transferido para R14
+	
+	mov.w R13, R14
+
+	call #mult_unsigned
+	
+	mov.w R15, R13
+
+	pop.w R14
+	pop.w R15
+
+	dec.w R14
+	jmp Potencia_loop
+
+	Potencia_retorno:
+	mov.w R13, R15
+	ret
+
+	; Recebe R15 e R14
+	mult_unsigned:
+	; Se R14 = 0, retornar 0 em R15 e sair da função
+	tst.w R14
+	jnz mult_op
+	clr.w R15
+	ret
+	
+	mult_op: \n"
+	; Guardar R15 na pilha, precisaremos dele, já que quando R14 = 0,
+	; limparemos o R15
+	push.w R15
+	; a*b = a + a + a + ... + a (b vezes)
+	dec.w R14
+	call #mult_unsigned
+
+	; Quando R14 = 0, um ret fará SP vir para cá \n"
+	; Precisamos recuperar R15 da pilha e colocar em R14
+	pop.w R14
+	; R14 = R15, então agora é só ir somando até as R14 vezes
+	add.w R14, R15
+	ret
+```
+
+```bak
 ; Incompleto
 ; R15 = x, R14 = N
 
@@ -66,7 +134,9 @@ mov.w #1, R13
 Potencia_loop:
 tst.w R14
 jz Potencia_retorno
-???????????????????Multiplica
+
+;Multiplicar
+
 dec.w R14
 jmp Potencia_loop
 
