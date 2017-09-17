@@ -123,31 +123,63 @@ int Potencia(int x, int N)
 	ret
 ```
 
-```bak
-; Incompleto
-; R15 = x, R14 = N
-
-Potencia:
-; Colocar 1 em R13
-mov.w #1, R13
-
-Potencia_loop:
-tst.w R14
-jz Potencia_retorno
-
-;Multiplicar
-
-dec.w R14
-jmp Potencia_loop
-
-Potencia_retorno:
-mov.w R13, R15
-ret
-```
 
 3. Escreva uma sub-rotina na linguagem Assembly do MSP430 que calcula a divisão de `a` por `b`, onde `a`, `b` e o valor de saída são inteiros de 16 bits. `a` e `b` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida através do registrador R15.
 
+```
+	; Recebe dividendo no R15 e divisor no R14
+	; Entrega quociente em R15
+	
+	divisao:
+	clr.w R13
+	tst.w R14
+	jnz divisao_loop
+	mov.w #0xFFFF, R15
+	ret
+	
+	divisao_loop:
+	; Guardar o quociente no R13
+	; Subtrair: R15 = R15 - R14 se R15 > R14
+	cmp R14, R15
+	jl result
+	sub.w R14, R15
+	inc.w R13
+	jmp divisao_loop
+	
+	result:
+	; Queremos o quociente, então colocar o R13 no R15
+	; Se quiser só o resto, R15 já estará pronto
+	mov.w R13, R15
+	ret
+```
+
 4. Escreva uma sub-rotina na linguagem Assembly do MSP430 que calcula o resto da divisão de `a` por `b`, onde `a`, `b` e o valor de saída são inteiros de 16 bits. `a` e `b` são fornecidos através dos registradores R15 e R14, respectivamente, e a saída deverá ser fornecida através do registrador R15.
+
+```
+	; Recebe dividendo no R15 e divisor no R14
+	; Entrega resto da divisão em R15
+	
+	resto_divisao:
+	clr.w R13
+	tst.w R14
+	jnz divisao_loop
+	mov.w #0xFFFF, R15
+	ret
+	
+	divisao_loop:
+	; Guardar o quociente no R13
+	; Subtrair: R15 = R15 - R14 se R15 > R14
+	cmp R14, R15
+	jl result
+	sub.w R14, R15
+	inc.w R13
+	jmp divisao_loop
+	
+	result:
+	; Queremos o quociente, então colocar o R13 no R15
+	; Se quiser só o resto, R15 já estará pronto
+	ret
+```
 
 5. (a) Escreva uma função em C que indica a primalidade de uma variável inteira sem sinal, retornando o valor 1 se o número for primo, e 0, caso contrário. Siga o seguinte protótipo:
 
@@ -182,8 +214,6 @@ int Primalidade(unsigned int x)
 (b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430. A variável de entrada é fornecida pelo registrador R15, e o valor de saída também.
 
 ```
-; Não testado
-
 Primalidade:
 ; R15 = numero, R14 = máximo, R13 = 1 e i, R12 = numteste
 ; Se for 2, é primo
@@ -202,15 +232,48 @@ jz Primalidade_nao_primo
 ; Testar se R15 é múltiplo de 2
 bit.w R13, R15
 jz Primalidade_nao_primo
+
+; Testar se R15 não é múltiplo de 3
+push.w R15
+push.w R14
+push.w R13
+mov.w #3, R14
+call #resto_divisao
+tst.w R15
+; pop não altera as flags de N, C, Z
+pop.w R13
+pop.w R14
+pop.w R15
+jz Primalidade_nao_primo
+
+
 ; R13 = 2, agora R13 = i
 mov.w #2, R13
-
 Primalidade_loop:
-cmp.w R13, R14
-jeq Primalidade_primo
-?????????????????????????????????????????????????????????????
+cmp.w R14, R13
+jge Primalidade_primo
+
+;Antes de chamar a função, salvar os registradores utilizados aqui
+push.w R15
+push.w R14
+push.w R13
+
+; Realizar o teste (x % ((i << 1) + 1)
+mov.w R13, R12
+rla.w R12
+inc.w R12
+mov.w R12, R14
+; Agora resto da divisão R15/R12
+call #resto_divisao
+; Verificar se o resto é zero
+tst.w R15
 jz Primalidade_nao_primo
+; recuperar o i original
+pop.w R13
 inc.w R13
+; Antes de pular, recuperar os originais antes do teste
+pop.w R14
+pop.w R15
 jmp Primalidade_loop
 
 
@@ -220,6 +283,28 @@ ret
 
 Primalidade_nao_primo:
 mov.w #0, R15
+ret
+
+; A função, subrotina, de resto da divisão
+resto_divisao:
+clr.w R13
+tst.w R14
+jnz divisao_loop
+mov.w #0xFFFF, R15
+ret
+
+divisao_loop:
+; Guardar o quociente no R13
+; Subtrair: R15 = R15 - R14 se R15 > R14
+cmp R14, R15
+jl result
+sub.w R14, R15
+inc.w R13
+jmp divisao_loop
+
+result:
+; Queremos o quociente, então colocar o R13 no R15
+; Se quiser só o resto, R15 já estará pronto
 ret
 ```
 
