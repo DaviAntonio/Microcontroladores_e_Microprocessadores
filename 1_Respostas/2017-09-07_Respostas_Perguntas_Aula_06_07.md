@@ -339,6 +339,53 @@ unsigned long long DuploFatorial(unsigned long long n)
 ```
 
 7. (a) Escreva uma função em C que calcula a função exponencial utilizando a série de Taylor da mesma. Considere o cálculo até o termo n = 20. O protótipo da função é `double ExpTaylor(double x);`
+
+```C
+unsigned int fatorial(int n)
+{
+	unsigned int res = n;
+	if(n < 0)
+		return 0;
+	if((n == 0) || (n == 1))
+		return 1;
+	while(--n){
+		res *= n;
+		/* Debugar a função de fatorial
+		printf("n = %u, res_temp = %u\n", n, res);
+		*/
+	}
+	/*puts("\n");*/
+	return res;
+}
+
+/*
+ * Função em C que calcula `x` elevado à `N`-ésima potência
+ */
+ double Potencia(double x, int N)
+{
+	double a = 1;
+	while(N > 0){
+		a *= x;
+		/* Debugar a função de potência
+		printf("N = %d, x = %lf\n", N, a);
+		*/
+		N--;
+	}
+	return a;
+}
+
+
+double ExpTaylor(double x)
+{
+	int max_ordem = 20;
+	double res = 0;
+	int i;
+	for(i = 0; i <= max_ordem; i++)
+		res += (Potencia(x, i)) / ((double)fatorial(i));
+	return res;
+}
+```
+
 (b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430, mas considere que os valores de entrada e de saída são inteiros de 16 bits. A variável de entrada é fornecida pelo registrador R15, e o valor de saída também.
 
 8. Escreva uma sub-rotina na linguagem Assembly do MSP430 que indica se um vetor esta ordenado de forma decrescente. Por exemplo:
@@ -357,4 +404,68 @@ Se o vetor for palíndromo, retorne o valor 1. Caso contrário, retorne o valor 
 int Palindromo(int vetor[ ], int tamanho);
 ```
 
+```C
+/* Retornar 1 se palíndromo e 0 se não for.*/
+int Palindromo(int vetor[], int tamanho)
+{
+	/* Vetores não precisam do \0 ser gravado*/
+	int i = 0;
+	/* Não precisa comparar todos os elementos do vetor
+	 * e.g. tamanho = 5
+	 * 0 = 4, 1 = 2, 2 = 2, 3 = 1*/
+	tamanho--;
+	while(i < tamanho){
+		if(vetor[i] != vetor[tamanho - i])
+			return 0;
+		i++;
+	}
+	return 1;
+}
+```
+
 (b) Escreva a sub-rotina equivalente na linguagem Assembly do MSP430. O endereço do vetor de entrada é dado pelo registrador R15, o tamanho do vetor é dado pelo registrador R14, e o resultado é dado pelo registrador R15.
+
+```
+; O endereço do primeiro vetor é colocado em R15, e o tamanho em R14
+; R13 = i, R12 = 2*i, R11 = &R15 + 2*i = &R15[i]
+; R10 = &vector[tam - i] = &R15 + 2*tam -2*i = &R15 + 2*R14 -R12
+Palindromo:
+; Usaremos registradores que podem estar sendo usados por outras funções
+push.w R11
+push.w R10
+; Limpar o R13, i = 0, decrementar R14, tam.
+clr.w R13
+dec.w R14
+
+Palindromo_loop:
+cmp.w R14, R13
+jge Eh_Palindromo
+; Multiplicar i por 2, pois o MSP só acessa os endereços pares, e guardar em R12
+mov.w R13, R12
+rla.w R12
+; Inicializar R11
+mov.w R15, R11
+add.w R12, R11
+; Inicializar R10
+mov.w R15, R10
+add.w R14, R10
+add.w R14, R10
+sub.w R12, R10
+; Comparar as duas posições do vetor
+cmp.w 0(R11), 0(R10)
+jne Nao_Eh_Palindromo
+inc.w R13
+jmp Palindromo_loop
+
+Eh_Palindromo:
+mov.w #1, R15
+pop.w R10
+pop.w R11
+ret
+
+Nao_Eh_Palindromo:
+mov.w #0, R15
+pop.w R10
+pop.w R11
+ret
+```
