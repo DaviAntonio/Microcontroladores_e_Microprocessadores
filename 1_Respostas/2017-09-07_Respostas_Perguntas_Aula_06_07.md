@@ -17,18 +17,25 @@ unsigned int Raiz_Quadrada(unsigned int S);
 ```C
 unsigned int Raiz_Quadrada(unsigned int S)
 {
-	unsigned int x0, x1, eps, i = 0;
+	unsigned int x0, x1, i = 0;
 
-    // Chute inicial
+	/* Raiz quadrada de 1 é 1 */
+	if(S == 1) return 1;
+	/* Raiz quadrada de zero é zero */
+	if(S == 0) return 0;
+	
+	/* Chute inicial */
 	x0 = S >> 1;
-
-	do{
+	
+	/*
+	* Testes revelam que o algoritmo consegue o resultado correto em até
+	* 20 iterações para um unsigned int.
+	*/
+	while(i <= 20){
 		x1 = (x0 + (S/x0)) >> 1;
-		eps = x0 - x1;
 		x0 = x1;
 		i++;
-	}while(eps > 0);
-
+	}
 	return x1;
 }
 ```
@@ -58,13 +65,9 @@ int Potencia(int x, int N)
 ```
 	; Calcular x^N
 	; Colocar valor x = R15 e N = R14
-	call #Potencia
-	
-	keep:
-	jmp keep
+	; Para usar: call #Potencia
 
 	; R15 = x, R14 = N
-
 	Potencia:
 	; Colocar 1 em R13, a
 	mov.w #1, R13
