@@ -1,0 +1,36 @@
+/*
+* Acender os LEDs quando botão é pressionado e desligar quando o botão é solto.
+*/
+
+#include <msp430.h>
+
+#define LED1 BIT0
+#define LED2 BIT6
+#define LEDS (LED1 | LED2)
+#define BTN BIT3
+
+int main(void)
+{
+// Parar o watchdog timer
+	WDTCTL = WDTPW | WDTHOLD;
+// Configurar os LEDs como saída
+	P1DIR |= LEDS;
+// Setar o BTN 3 como entrada (0)
+	P1DIR &= ~BTN;
+// Configurar pull-up e pull-down
+	P1REN |= BTN;
+// Escolher pull-down
+	P1OUT |= BTN;
+// Começar desligado
+	P1OUT &= ~LEDS;
+
+	while(1){
+	if((P1IN & BTN) == 0)
+// Acender os LEDs
+		P1OUT |= LEDS;
+	else
+// Desligar LEDs ao soltar
+		P1OUT &= ~LEDS;
+	}
+	return 0;
+}
