@@ -24,10 +24,10 @@ interrupt(PORT1_VECTOR) ISR_debounce_delay_P1(void)
 	P1DIR &= ~BTN;
 	Configurar pull-up e pull-down
 	P1REN |= BTN;
-	Escolher pull-down no BTN (1)
+	Escolher pull-up no BTN (1)
 	P1OUT |= BTN;
 	Ligar interrupção por borda de descida (1) no botão P1.3,
-	pois é pull-down
+	pois é pull-up
 	P1IES |= BTN;
 	Habilitar interrupção na porta P1.3, o botão
 	P1IE |= BTN;

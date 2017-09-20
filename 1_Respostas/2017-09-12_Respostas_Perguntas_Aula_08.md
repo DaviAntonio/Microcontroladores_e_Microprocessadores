@@ -101,7 +101,7 @@ int main(void)
 	P1DIR &= ~BTN;
 // Configurar pull-up e pull-down
 	P1REN |= BTN;
-// Escolher pull-down
+// Escolher pull-up
 	P1OUT |= BTN;
 // Começar desligado
 	P1OUT &= ~LEDS;
@@ -170,9 +170,9 @@ int main(void)
 	P1DIR &= ~BTN;
 // Configurar pull-up e pull-down no BTN P1.3
 	P1REN |= BTN;
-// Escolher pull-down
+// Escolher pull-up
 	P1OUT |= BTN;
-// Ligar interrupção por borda de descida (1) no botão P1.3, pois é pull-down
+// Ligar interrupção por borda de descida (1) no botão P1.3, pois é pull-up
 	P1IES |= BTN;
 // Habilitar interrupção na porta P1.3, o botão
 	P1IE |= BTN;
@@ -230,9 +230,9 @@ int main(void)
 	P1DIR &= ~BTN;
 // Configurar pull-up e pull-down no BTN P1.3
 	P1REN |= BTN;
-// Escolher pull-down
+// Escolher pull-up
 	P1OUT |= BTN;
-// Ligar interrupção por borda de descida (1) no botão P1.3, pois é pull-down
+// Ligar interrupção por borda de descida (1) no botão P1.3, pois é pull-up
 	P1IES |= BTN;
 // Habilitar interrupção na porta P1.3, o botão
 	P1IE |= BTN;
