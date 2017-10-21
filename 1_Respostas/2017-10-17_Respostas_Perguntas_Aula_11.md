@@ -2,6 +2,8 @@
 ## Data: 17/10/2017
 1. Defina a função `void Atraso(volatile unsigned int x);` que fornece um atraso de `x` milissegundos. Utilize o Timer_A para a contagem de tempo, e assuma que o SMCLK já foi configurado para funcionar a 1 MHz. Esta função poderá ser utilizada diretamente nas outras questões desta prova.
 
+2. Pisque os LEDs da Launchpad numa frequência de 100 Hz.
+
 ```C
 #include <msp430.h>
 
@@ -218,6 +220,270 @@ int main(void)
 ```
 
 6. Repita as questões 2 a 5 usando a interrupção do Timer A para acender ou apagar os LEDs.
+
+# Frequencia 100 Hz
+
+```C
+#include <msp430.h>
+#include <legacymsp430.h>	/* Habilita interrupções */
+
+#define LED1 BIT0
+#define LED2 BIT6
+#define LEDS (LED1|LED2)
+
+#define TEMPO_MS_METADE 5
+
+/*
+ * freq = 100 Hz;	tempo = 10 ms;		tempo/2 = 5ms
+ * freq = 20 Hz;	tempo = 50 ms;		tempo/2 = 25 ms
+ * freq = 1 Hz;		tempo = 1000 ms;	tempo/2 = 500 ms
+ * freq = 0,5 Hz;	tempo = 2000 ms;	tempo/2 = 1000 ms
+ */
+
+void Configura_Timer(volatile unsigned int x)
+{
+	/* 1000 contagens de 1 us = 1 ms, mas conta o zero (up) */
+	TA0CCR0 = x - 1;
+	
+	/* Usar SMCLK, não dividi-lo, contar em modo up e ligar a
+	 * interrupção de término da contagem */
+	TA0CTL = TASSEL_2 + ID_0 + MC_1 + TAIE;
+}
+
+int main(void)
+{
+	/* Parar o watchdog timer */
+	WDTCTL = WDTPW + WDTHOLD;
+	
+	/* SMCLK = MCLK = 1 MHz */
+	BCSCTL1 = CALBC1_1MHZ;
+	DCOCTL = CALDCO_1MHZ;
+	
+	/* Colocar LEDS como saída */
+	P1DIR |= LEDS;
+	P1OUT |= ~LEDS;
+
+	Configura_Timer(TEMPO_MS_METADE);
+
+	_BIS_SR(GIE + LPM0_bits);
+	
+	/* Nunca chegará */
+
+	return 0;
+}
+
+interrupt(TIMER0_A1_VECTOR) InterrupcaoP1(void)
+{
+	TA0CTL &= ~TAIFG;
+	
+	static int i = 0;
+	
+	i = (i + 1) % 1000;
+	
+	if(i == 0)
+		P1OUT ^= LEDS;
+}
+
+
+```
+
+# Frequencia 20 Hz
+
+```C
+#include <msp430.h>
+#include <legacymsp430.h>	/* Habilita interrupções */
+
+#define LED1 BIT0
+#define LED2 BIT6
+#define LEDS (LED1|LED2)
+
+#define TEMPO_MS_METADE 25
+
+/*
+ * freq = 100 Hz;	tempo = 10 ms;		tempo/2 = 5ms
+ * freq = 20 Hz;	tempo = 50 ms;		tempo/2 = 25 ms
+ * freq = 1 Hz;		tempo = 1000 ms;	tempo/2 = 500 ms
+ * freq = 0,5 Hz;	tempo = 2000 ms;	tempo/2 = 1000 ms
+ */
+
+void Configura_Timer(volatile unsigned int x)
+{
+	/* 1000 contagens de 1 us = 1 ms, mas conta o zero (up) */
+	TA0CCR0 = x - 1;
+	
+	/* Usar SMCLK, não dividi-lo, contar em modo up e ligar a
+	 * interrupção de término da contagem */
+	TA0CTL = TASSEL_2 + ID_0 + MC_1 + TAIE;
+}
+
+int main(void)
+{
+	/* Parar o watchdog timer */
+	WDTCTL = WDTPW + WDTHOLD;
+	
+	/* SMCLK = MCLK = 1 MHz */
+	BCSCTL1 = CALBC1_1MHZ;
+	DCOCTL = CALDCO_1MHZ;
+	
+	/* Colocar LEDS como saída */
+	P1DIR |= LEDS;
+	P1OUT |= ~LEDS;
+
+	Configura_Timer(TEMPO_MS_METADE);
+
+	_BIS_SR(GIE + LPM0_bits);
+	
+	/* Nunca chegará */
+
+	return 0;
+}
+
+interrupt(TIMER0_A1_VECTOR) InterrupcaoP1(void)
+{
+	TA0CTL &= ~TAIFG;
+	
+	static int i = 0;
+	
+	i = (i + 1) % 1000;
+	
+	if(i == 0)
+		P1OUT ^= LEDS;
+}
+
+
+```
+
+# Frequencia 1 Hz
+
+```C
+#include <msp430.h>
+#include <legacymsp430.h>	/* Habilita interrupções */
+
+#define LED1 BIT0
+#define LED2 BIT6
+#define LEDS (LED1|LED2)
+
+#define TEMPO_MS_METADE 500
+
+/*
+ * freq = 100 Hz;	tempo = 10 ms;		tempo/2 = 5ms
+ * freq = 20 Hz;	tempo = 50 ms;		tempo/2 = 25 ms
+ * freq = 1 Hz;		tempo = 1000 ms;	tempo/2 = 500 ms
+ * freq = 0,5 Hz;	tempo = 2000 ms;	tempo/2 = 1000 ms
+ */
+
+void Configura_Timer(volatile unsigned int x)
+{
+	/* 1000 contagens de 1 us = 1 ms, mas conta o zero (up) */
+	TA0CCR0 = x - 1;
+	
+	/* Usar SMCLK, não dividi-lo, contar em modo up e ligar a
+	 * interrupção de término da contagem */
+	TA0CTL = TASSEL_2 + ID_0 + MC_1 + TAIE;
+}
+
+int main(void)
+{
+	/* Parar o watchdog timer */
+	WDTCTL = WDTPW + WDTHOLD;
+	
+	/* SMCLK = MCLK = 1 MHz */
+	BCSCTL1 = CALBC1_1MHZ;
+	DCOCTL = CALDCO_1MHZ;
+	
+	/* Colocar LEDS como saída */
+	P1DIR |= LEDS;
+	P1OUT |= ~LEDS;
+
+	Configura_Timer(TEMPO_MS_METADE);
+
+	_BIS_SR(GIE + LPM0_bits);
+	
+	/* Nunca chegará */
+
+	return 0;
+}
+
+interrupt(TIMER0_A1_VECTOR) InterrupcaoP1(void)
+{
+	TA0CTL &= ~TAIFG;
+	
+	static int i = 0;
+	
+	i = (i + 1) % 1000;
+	
+	if(i == 0)
+		P1OUT ^= LEDS;
+}
+
+
+```
+
+# Frequencia 0,5 Hz
+
+```C
+#include <msp430.h>
+#include <legacymsp430.h>	/* Habilita interrupções */
+
+#define LED1 BIT0
+#define LED2 BIT6
+#define LEDS (LED1|LED2)
+
+#define TEMPO_MS_METADE 1000
+
+/*
+ * freq = 100 Hz;	tempo = 10 ms;		tempo/2 = 5ms
+ * freq = 20 Hz;	tempo = 50 ms;		tempo/2 = 25 ms
+ * freq = 1 Hz;		tempo = 1000 ms;	tempo/2 = 500 ms
+ * freq = 0,5 Hz;	tempo = 2000 ms;	tempo/2 = 1000 ms
+ */
+
+void Configura_Timer(volatile unsigned int x)
+{
+	/* 1000 contagens de 1 us = 1 ms, mas conta o zero (up) */
+	TA0CCR0 = x - 1;
+	
+	/* Usar SMCLK, não dividi-lo, contar em modo up e ligar a
+	 * interrupção de término da contagem */
+	TA0CTL = TASSEL_2 + ID_0 + MC_1 + TAIE;
+}
+
+int main(void)
+{
+	/* Parar o watchdog timer */
+	WDTCTL = WDTPW + WDTHOLD;
+	
+	/* SMCLK = MCLK = 1 MHz */
+	BCSCTL1 = CALBC1_1MHZ;
+	DCOCTL = CALDCO_1MHZ;
+	
+	/* Colocar LEDS como saída */
+	P1DIR |= LEDS;
+	P1OUT |= ~LEDS;
+
+	Configura_Timer(TEMPO_MS_METADE);
+
+	_BIS_SR(GIE + LPM0_bits);
+	
+	/* Nunca chegará */
+
+	return 0;
+}
+
+interrupt(TIMER0_A1_VECTOR) InterrupcaoP1(void)
+{
+	TA0CTL &= ~TAIFG;
+	
+	static int i = 0;
+	
+	i = (i + 1) % 1000;
+	
+	if(i == 0)
+		P1OUT ^= LEDS;
+}
+
+
+```
 
 7. Defina a função `void paralelo_para_serial(void);` que lê o byte de entrada via porta P1 e transmite os bits serialmente via pino P2.0. Comece com um bit em nivel alto, depois os bits na ordem P1.0 - P1.1 - … - P1.7 e termine com um bit em nível baixo. Considere um período de 1 ms entre os bits.
 
