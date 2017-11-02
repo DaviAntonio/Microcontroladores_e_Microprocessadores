@@ -1,6 +1,27 @@
 # Respostas às Perguntas Aula 11
 ## Data: 17/10/2017
 1. Defina a função `void Atraso(volatile unsigned int x);` que fornece um atraso de `x` milissegundos. Utilize o Timer_A para a contagem de tempo, e assuma que o SMCLK já foi configurado para funcionar a 1 MHz. Esta função poderá ser utilizada diretamente nas outras questões desta prova.
+```C
+void Atraso(volatile unsigned int x)
+{
+	int i;
+	
+	for(i = 0; i < 1000; i++){ 
+	/* 1000 contagens de 1 us = 1 ms, mas conta o zero (up) */
+	TA0CCR0 = x - 1;
+	
+	/* Usar SMCLK, não dividi-lo e contar em modo up */
+	TA0CTL = TASSEL_2 + ID_0 + MC_1;
+	
+	/* Espera terminar contagem */
+	while((TA0CTL & TAIFG) == 0);
+	}
+	
+	/* Parar e zerar o timer */
+	TA0CTL = MC_0 + TACLR;
+	TA0CTL &= ~TAIFG;
+}
+```
 
 2. Pisque os LEDs da Launchpad numa frequência de 100 Hz.
 
